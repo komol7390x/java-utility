@@ -4,14 +4,17 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Product {
+    @JsonProperty("id")
     public int getId() {
         return id;
     }
 
+    @JsonProperty("title")
     public String getName() {
         return name;
     }
 
+    @JsonProperty("done")
     public boolean isAvailable() {
         return isAvailable;
     }

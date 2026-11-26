@@ -1,0 +1,8 @@
+[
+  {"id": 1, "name": "Choynak", "price": 185000, "category": "Oshxona"},
+  {"id": 2, "name": "Qoshiq", "price": 12000, "category": "Oshxona"},
+  {"id": 3, "name": "Daftar", "price": 8500, "category": "Kanselyariya"},
+  {"id": 4, "name": "Ruchka", "price": 3000, "category": "Kanselyariya"},
+  {"id": 5, "name": "Lampa", "price": 96000, "category": "Uy"},
+  {"id": 6, "name": "Yostiq", "price": 54000, "category": "Uy"}
+]
