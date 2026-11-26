@@ -4,19 +4,15 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
-import exercise.record.Book;
-import exercise.record.City;
-import exercise.record.Movie;
-import exercise.record.Product;
+import exercise.record.*;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.BinaryOperator;
+import java.util.stream.Collectors;
 
 public class Json {
     static JsonMapper json = JsonMapper
@@ -29,10 +25,10 @@ public class Json {
 //        bookToJson();
 //        movieToJson();
 //        cityToJson();
-        productJson();
+//        productJson();
+        cartItem();
 
     }
-
 
     private static void bookToJson() throws JsonProcessingException {
 
@@ -70,8 +66,33 @@ public class Json {
 
     private static void productJson() throws IOException {
         Path path = Path.of(String.valueOf(jsonPath), "product.json");
-        String jsonString=Files.readString(path);
-        List<Product> products=json.readValue(jsonString, new TypeReference<List<Product>>() {});
-        System.out.println(products);
+        String jsonString = Files.readString(path);
+        List<Product> products = json.readValue(jsonString, new TypeReference<List<Product>>() {
+        });
+        int size = products.size();
+        List<String> expensiveProduct = products.stream().filter(p -> p.price() > 50_000).map(Product::name).toList();
+        System.out.println("Jami:" + size);
+        System.out.println("Qimmat mahsulotlar: " + expensiveProduct);
+        Map<String, Long> counts = products.stream().collect(Collectors.groupingBy(Product::category, Collectors.counting()));
+        counts.forEach((category, count) -> System.out.println(category + " : " + count));
+    }
+
+    private static void cartItem() throws IOException {
+        Path path = Path.of(String.valueOf(jsonPath), "cart.json");
+        String jsonString = Files.readString(path);
+        Cart cart = json.readValue(jsonString, Cart.class);
+        System.out.println("Mijoz: " + cart.customer());
+        double sum = cart.items().stream()
+                .mapToDouble(item -> item.price() * item.qty())
+                .sum();
+        System.out.println("Umumiy summa: " + sum);
+        int count = cart.items().stream().mapToInt(CartItem::qty).sum();
+        System.out.println("Jami dona: " + count);
+        String mostExpensiveName = cart.items().stream()
+                .max(Comparator.comparingDouble(item -> item.price() * item.qty()))
+                .map(CartItem::product)
+                .orElse("Topilmadi");
+        System.out.println("Eng katta qator: " + mostExpensiveName);
+        System.out.println("Chegirma bilan: " + (sum > 100_000 ? sum * 0.95 : sum));
     }
 }

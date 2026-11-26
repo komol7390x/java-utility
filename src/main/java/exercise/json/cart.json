@@ -1,0 +1,9 @@
+{
+  "customer": "Madina",
+  "items": [
+    {"product": "Olma", "price": 18000, "qty": 3},
+    {"product": "Non", "price": 4000, "qty": 5},
+    {"product": "Sut", "price": 13500, "qty": 2},
+    {"product": "Shokolad", "price": 22000, "qty": 1}
+  ]
+}
