@@ -30,7 +30,7 @@ public class Json {
 //        contact();
 //        order();
 //        populationToRead();
-        student();
+//        student();
 
     }
 
