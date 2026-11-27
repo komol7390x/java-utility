@@ -27,6 +27,8 @@ public class Json {
 //        cityToJson();
 //        productJson();
 //        cartItem();
+//        readJson();
+//        bankCard();
 
     }
 
@@ -94,5 +96,19 @@ public class Json {
                 .orElse("Topilmadi");
         System.out.println("Eng katta qator: " + mostExpensiveName);
         System.out.println("Chegirma bilan: " + (sum > 100_000 ? sum * 0.95 : sum));
+    }
+
+    private static void readJson() throws IOException {
+        Path path = Path.of(String.valueOf(jsonPath), "person.json");
+        String jsonString = Files.readString(path);
+        Person person = json.readValue(jsonString, Person.class);
+        System.out.println(person.firstName() + " " + person.lastName() + ", " + (2026 - person.birthYear()) + " yosh");
+        System.out.println(jsonString);
+    }
+
+    private static void bankCard() throws JsonProcessingException {
+        BankCard bankCard = new BankCard("Sevara", "8600 **** **** 4512", "1234", 1500000);
+        String jsonString = json.writeValueAsString(bankCard);
+        System.out.println(jsonString);
     }
 }
