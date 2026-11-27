@@ -1,0 +1,10 @@
+{
+  "orderId": "A-1024",
+  "customer": {"name": "Sardor", "city": "Namangan", "phone": "+998901234567"},
+  "items": [
+    {"name": "Kitob", "price": 65000, "qty": 2},
+    {"name": "Daftar", "price": 8500, "qty": 10},
+    {"name": "Ruchka", "price": 3000, "qty": 5}
+  ],
+  "paid": false
+}

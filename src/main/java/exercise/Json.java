@@ -2,6 +2,7 @@ package exercise;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import exercise.record.*;
@@ -15,10 +16,7 @@ import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 
 public class Json {
-    static JsonMapper json = JsonMapper
-            .builder().enable(SerializationFeature.INDENT_OUTPUT)
-            .disable(SerializationFeature.FAIL_ON_UNWRAPPED_TYPE_IDENTIFIERS)
-            .build();
+    static JsonMapper json = JsonMapper.builder().enable(SerializationFeature.INDENT_OUTPUT).disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES).build();
     static Path jsonPath = Path.of("src", "main", "java", "exercise", "json").toAbsolutePath();
 
     public static void main(String[] args) throws IOException {
@@ -29,6 +27,8 @@ public class Json {
 //        cartItem();
 //        readJson();
 //        bankCard();
+//        contact();
+//        order();
 
     }
 
@@ -84,16 +84,11 @@ public class Json {
         String jsonString = Files.readString(path);
         Cart cart = json.readValue(jsonString, Cart.class);
         System.out.println("Mijoz: " + cart.customer());
-        double sum = cart.items().stream()
-                .mapToDouble(item -> item.price() * item.qty())
-                .sum();
+        double sum = cart.items().stream().mapToDouble(item -> item.price() * item.qty()).sum();
         System.out.println("Umumiy summa: " + sum);
         int count = cart.items().stream().mapToInt(CartItem::qty).sum();
         System.out.println("Jami dona: " + count);
-        String mostExpensiveName = cart.items().stream()
-                .max(Comparator.comparingDouble(item -> item.price() * item.qty()))
-                .map(CartItem::product)
-                .orElse("Topilmadi");
+        String mostExpensiveName = cart.items().stream().max(Comparator.comparingDouble(item -> item.price() * item.qty())).map(CartItem::product).orElse("Topilmadi");
         System.out.println("Eng katta qator: " + mostExpensiveName);
         System.out.println("Chegirma bilan: " + (sum > 100_000 ? sum * 0.95 : sum));
     }
@@ -110,5 +105,25 @@ public class Json {
         BankCard bankCard = new BankCard("Sevara", "8600 **** **** 4512", "1234", 1500000);
         String jsonString = json.writeValueAsString(bankCard);
         System.out.println(jsonString);
+    }
+
+    private static void contact() throws JsonProcessingException {
+        List<Contact> contacts = List.of(new Contact("Anvar", "+998901112233", "anvar@mail.uz", null), new Contact("Barno", "+998935556677", null, "@barno_uz"), new Contact("Sanjar", null, null, null));
+
+        String jsonString = json.writeValueAsString(contacts);
+        System.out.println(jsonString);
+
+    }
+
+    private static void order() throws IOException {
+        Path path = Path.of(String.valueOf(jsonPath), "order.json");
+        String jsonString = Files.readString(path);
+        Order order = json.readValue(jsonString, Order.class);
+        System.out.println("Buyurtma: " + order.orderId());
+        System.out.println("Mijoz shahri: " + order.customer().city());
+        System.out.println("Mahsulot turlari: " + order.items().size());
+        System.out.println("Jami dona: " + order.items().stream().mapToInt(OrderItem::qty).sum());
+        System.out.println("Jami summa: " + order.items().stream().mapToDouble(item -> item.price() * item.qty()).sum());
+        System.out.println("Holati: " + (order.paid() ? "To'langan" : "To'lanmagan"));
     }
 }
