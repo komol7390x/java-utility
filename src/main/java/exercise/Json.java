@@ -8,11 +8,9 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import exercise.record.*;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 
 public class Json {
@@ -31,6 +29,7 @@ public class Json {
 //        order();
 //        populationToRead();
 //        student();
+        library();
 
     }
 
@@ -161,5 +160,48 @@ public class Json {
         String jsonOutput = json.writeValueAsString(groups);
         Files.writeString(pathGroup, jsonOutput);
         System.out.println("Success");
+    }
+
+    private static void library() throws IOException {
+        Path path = Path.of(String.valueOf(jsonPath), "library.json");
+        String jsonString = Files.readString(path);
+        List<Library> libraries = json.readValue(jsonString, new TypeReference<List<Library>>() {
+        });
+
+        List<String> lastAvailableTitles = libraries.stream()
+                .filter(Library::available)
+                .map(Library::title)
+                .toList();
+        System.out.println("Oldin mavjud kitoblar: " + lastAvailableTitles);
+
+        long beforeCount = libraries.stream().filter(Library::available).count();
+        System.out.println("Oldin mavjud: " + beforeCount);
+        List<Library> updatedLibraries = libraries.stream()
+                .map(book -> {
+                    if (book.id() == 3) {
+                        return new Library(book.id(), book.title(), book.author(), false);
+                    }
+                    if (book.id() == 2) {
+                        return new Library(book.id(), book.title(), book.author(), true);
+                    }
+                    return book;
+                })
+                .toList();
+
+        String updateJson = json.writerWithDefaultPrettyPrinter().writeValueAsString(updatedLibraries);
+        Files.writeString(path, updateJson);
+
+        String reloadedJson = Files.readString(path);
+        List<Library> reloadedLibraries = json.readValue(reloadedJson, new TypeReference<List<Library>>() {});
+
+        long afterCount = reloadedLibraries.stream()
+                .filter(Library::available)
+                .count();
+        System.out.println("Keyin mavjud: " + afterCount);
+        List<String> afterAvailableTitles = reloadedLibraries.stream()
+                .filter(Library::available)
+                .map(Library::title)
+                .toList();
+        System.out.println("Keyin mavjud kitoblar: " + afterAvailableTitles);
     }
 }
