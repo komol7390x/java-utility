@@ -29,6 +29,8 @@ public class Json {
 //        bankCard();
 //        contact();
 //        order();
+//        populationToRead();
+        student();
 
     }
 
@@ -125,5 +127,39 @@ public class Json {
         System.out.println("Jami dona: " + order.items().stream().mapToInt(OrderItem::qty).sum());
         System.out.println("Jami summa: " + order.items().stream().mapToDouble(item -> item.price() * item.qty()).sum());
         System.out.println("Holati: " + (order.paid() ? "To'langan" : "To'lanmagan"));
+    }
+
+    private static void populationToRead() throws IOException {
+        Path path = Path.of(String.valueOf(jsonPath), "population.json");
+        String jsonString = Files.readString(path);
+        Map<String, Long> population = json.readValue(jsonString, new TypeReference<Map<String, Long>>() {
+        });
+        Map.Entry<String, Long> maxEntry = population.entrySet().stream().max(Map.Entry.comparingByValue()).orElseThrow();
+        long allPopulation = population.values().stream()
+                .mapToLong(Long::longValue)
+                .sum();
+        Map<String, Long> over400k = population.entrySet().stream()
+                .filter(ent -> ent.getValue() > 400_000)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        System.out.println("Eng katta: " + maxEntry.getKey() + " (" + maxEntry.getValue() + ") ");
+        System.out.println("Jami: " + allPopulation);
+        System.out.println(400_000 + " mingdan ko'p: " + over400k.values());
+    }
+
+    private static void student() throws IOException {
+        Path pathStudent = Path.of(String.valueOf(jsonPath), "students.json");
+        String jsonString = Files.readString(pathStudent);
+        List<Student> students = json.readValue(jsonString, new TypeReference<List<Student>>() {
+        });
+        Map<String, List<String>> groups = students.stream()
+                .collect(Collectors.groupingBy(
+                        Student::group,
+                        Collectors.mapping(Student::name, Collectors.toList())
+                ));
+        Path pathGroup = Path.of(String.valueOf(jsonPath), "group.json");
+        Files.createDirectories(pathGroup.getParent());
+        String jsonOutput = json.writeValueAsString(groups);
+        Files.writeString(pathGroup, jsonOutput);
+        System.out.println("Success");
     }
 }

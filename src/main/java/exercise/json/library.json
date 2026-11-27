@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "title": "Alkimyogar",
+    "author": "Paulo Koelo",
+    "available": true
+  },
+  {
+    "id": 2,
+    "title": "Shum bola",
+    "author": "G‘afur G‘ulom",
+    "available": false
+  },
+  {
+    "id": 3,
+    "title": "Ufq",
+    "author": "Said Ahmad",
+    "available": true
+  },
+  {
+    "id": 4,
+    "title": "Dunyoning ishlari",
+    "author": "O‘tkir Hoshimov",
+    "available": true
+  }
+]
